@@ -139,6 +139,24 @@ require_once __DIR__ . '/../includes/layout/header.php';
             <p><?= nl2br(e($movie['synopsis'])) ?></p>
         </div>
 
+        <?php $embedUrl = youtubeEmbedUrl($movie['trailer_url'] ?? ''); ?>
+        <?php if ($embedUrl): ?>
+        <div class="card" style="margin-bottom:24px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
+                <h3>Trailer Resmi</h3>
+                <a href="<?= e($movie['trailer_url']) ?>" target="_blank" rel="noopener" class="btn btn-outline btn-sm">Buka di YouTube &nearr;</a>
+            </div>
+            <div class="trailer-wrap">
+                <iframe
+                    src="<?= e($embedUrl) ?>"
+                    title="Trailer <?= e($movie['title']) ?>"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowfullscreen
+                    loading="lazy"></iframe>
+            </div>
+        </div>
+        <?php endif; ?>
+
         <div class="card" style="margin-bottom:24px;">
             <h3 style="margin-bottom:12px;">Pilih Jadwal Tayang</h3>
             <?php if (empty($groupedShowtimes)): ?>

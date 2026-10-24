@@ -110,6 +110,28 @@ function userInitials(string $name): string
 }
 
 /**
+ * Konversi otomatis berbagai format link YouTube (watch?v=, youtu.be/, embed/)
+ * menjadi URL embed yang siap dipasang di <iframe>.
+ */
+function youtubeEmbedUrl(?string $url): ?string
+{
+    $url = trim((string)$url);
+    if ($url === '') {
+        return null;
+    }
+
+    if (preg_match('~(?:youtube\.com/(?:watch\?v=|embed/|shorts/)|youtu\.be/)([a-zA-Z0-9_-]{11})~', $url, $matches)) {
+        return 'https://www.youtube.com/embed/' . $matches[1];
+    }
+
+    if (str_starts_with($url, 'http://') || str_starts_with($url, 'https://')) {
+        return $url;
+    }
+
+    return null;
+}
+
+/**
  * Generate kursi otomatis saat studio dibuat atau diubah ukurannya
  */
 function generateStudioSeats(PDO $pdo, int $studioId, int $rows, int $cols, string $type): void

@@ -33,6 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $language = trim($_POST['language'] ?? 'Indonesia');
         $director = trim($_POST['director'] ?? '');
         $castList = trim($_POST['cast_list'] ?? '');
+        $trailerUrl = trim($_POST['trailer_url'] ?? '');
         $status = $_POST['status'] ?? 'now_showing';
         $selectedGenres = array_map('intval', $_POST['genres'] ?? []);
 
@@ -42,27 +43,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if ($uploadedPoster) {
                 $upd = $pdo->prepare("
                     UPDATE movies
-                    SET title=?, synopsis=?, duration_min=?, age_rating=?, language=?, director=?, cast_list=?, poster=?, status=?
+                    SET title=?, synopsis=?, duration_min=?, age_rating=?, language=?, director=?, cast_list=?, trailer_url=?, poster=?, status=?
                     WHERE id=?
                 ");
-                $upd->execute([$title, $synopsis, $duration, $ageRating, $language, $director, $castList, $uploadedPoster, $status, $id]);
+                $upd->execute([$title, $synopsis, $duration, $ageRating, $language, $director, $castList, $trailerUrl, $uploadedPoster, $status, $id]);
             } else {
                 $upd = $pdo->prepare("
                     UPDATE movies
-                    SET title=?, synopsis=?, duration_min=?, age_rating=?, language=?, director=?, cast_list=?, status=?
+                    SET title=?, synopsis=?, duration_min=?, age_rating=?, language=?, director=?, cast_list=?, trailer_url=?, status=?
                     WHERE id=?
                 ");
-                $upd->execute([$title, $synopsis, $duration, $ageRating, $language, $director, $castList, $status, $id]);
+                $upd->execute([$title, $synopsis, $duration, $ageRating, $language, $director, $castList, $trailerUrl, $status, $id]);
             }
             $movieId = $id;
             setFlash('success', 'Data film berhasil diperbarui.');
         } else {
             $posterName = $uploadedPoster ?: 'poster-1.svg';
             $ins = $pdo->prepare("
-                INSERT INTO movies (title, synopsis, duration_min, release_date, age_rating, language, director, cast_list, poster, status)
-                VALUES (?, ?, ?, CURDATE(), ?, ?, ?, ?, ?, ?)
+                INSERT INTO movies (title, synopsis, duration_min, release_date, age_rating, language, director, cast_list, poster, trailer_url, status)
+                VALUES (?, ?, ?, CURDATE(), ?, ?, ?, ?, ?, ?, ?)
             ");
-            $ins->execute([$title, $synopsis, $duration, $ageRating, $language, $director, $castList, $posterName, $status]);
+            $ins->execute([$title, $synopsis, $duration, $ageRating, $language, $director, $castList, $posterName, $trailerUrl, $status]);
             $movieId = (int)$pdo->lastInsertId();
             setFlash('success', 'Film baru berhasil ditambahkan dan langsung tampil di katalog.');
         }
@@ -158,6 +159,11 @@ require_once __DIR__ . '/../includes/layout/header.php';
                 <label for="poster">Upload Poster (JPG/PNG/SVG)</label>
                 <input type="file" id="poster" name="poster" accept=".jpg,.jpeg,.png,.webp,.svg" class="form-control">
             </div>
+        </div>
+
+        <div class="form-group">
+            <label for="trailer_url">URL Trailer YouTube (Bisa link biasa <code>youtube.com/watch?v=...</code> atau <code>youtu.be/...</code>)</label>
+            <input type="text" id="trailer_url" name="trailer_url" value="<?= e($editMovie['trailer_url'] ?? '') ?>" placeholder="https://www.youtube.com/watch?v=...">
         </div>
 
         <div class="form-group">
