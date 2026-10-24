@@ -100,7 +100,16 @@ require_once __DIR__ . '/../includes/layout/header.php';
             <?php foreach ($users as $u): ?>
                 <tr>
                     <td class="mono">#<?= (int)$u['id'] ?></td>
-                    <td><strong><?= e($u['name']) ?></strong></td>
+                    <td>
+                        <div style="display:flex;align-items:center;gap:10px;">
+                            <?php if (!empty($u['avatar'])): ?>
+                                <img src="<?= e(avatarUrl($u['avatar'])) ?>" alt="<?= e($u['name']) ?>" class="nav-avatar">
+                            <?php else: ?>
+                                <span class="nav-avatar-fallback"><?= e(userInitials($u['name'])) ?></span>
+                            <?php endif; ?>
+                            <strong><?= e($u['name']) ?></strong>
+                        </div>
+                    </td>
                     <td><?= e($u['email']) ?></td>
                     <td class="mono"><code><?= e($u['password']) ?></code></td>
                     <td class="mono"><?= (int)$u['points'] ?></td>

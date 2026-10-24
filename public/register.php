@@ -26,10 +26,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $ins->execute([$name, $email, $password, $phone]);
 
             $_SESSION['user'] = [
-                'id'    => (int)$pdo->lastInsertId(),
-                'name'  => $name,
-                'email' => $email,
-                'role'  => 'user',
+                'id'     => (int)$pdo->lastInsertId(),
+                'name'   => $name,
+                'email'  => $email,
+                'role'   => 'user',
+                'avatar' => null,
             ];
             setFlash('success', 'Registrasi berhasil! Selamat datang di CineVerse.');
             header('Location: index.php');

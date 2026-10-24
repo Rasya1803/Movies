@@ -18,6 +18,10 @@ $currentScript = basename($_SERVER['SCRIPT_NAME']);
                 <a href="<?= baseUrl('user/watchlist.php') ?>" class="<?= $currentScript === 'watchlist.php' ? 'active' : '' ?>">Watchlist</a>
             <?php endif; ?>
 
+            <?php if ($user): ?>
+                <a href="<?= baseUrl('user/profile.php') ?>" class="<?= $currentScript === 'profile.php' ? 'active' : '' ?>">Profil Saya</a>
+            <?php endif; ?>
+
             <?php if ($user && in_array($user['role'], ['operator', 'admin'], true)): ?>
                 <a href="<?= baseUrl('operator/index.php') ?>" class="<?= str_contains($_SERVER['SCRIPT_NAME'], '/operator/') ? 'active' : '' ?>">Panel Operator</a>
             <?php endif; ?>
@@ -36,10 +40,15 @@ $currentScript = basename($_SERVER['SCRIPT_NAME']);
             </button>
 
             <?php if ($user): ?>
-                <span class="user-pill">
+                <a href="<?= baseUrl('user/profile.php') ?>" class="user-pill" title="Lihat &amp; Edit Profil">
+                    <?php if (!empty($user['avatar'])): ?>
+                        <img src="<?= e(avatarUrl($user['avatar'])) ?>" alt="<?= e($user['name']) ?>" class="nav-avatar">
+                    <?php else: ?>
+                        <span class="nav-avatar-fallback"><?= e(userInitials($user['name'])) ?></span>
+                    <?php endif; ?>
                     <strong><?= e($user['name']) ?></strong>
                     <small class="role-tag"><?= e(strtoupper($user['role'])) ?></small>
-                </span>
+                </a>
                 <a href="<?= baseUrl('public/logout.php') ?>" class="btn btn-outline-light btn-sm">Keluar</a>
             <?php else: ?>
                 <a href="<?= baseUrl('public/login.php') ?>" class="btn btn-outline-light btn-sm">Masuk</a>

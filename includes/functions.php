@@ -61,6 +61,55 @@ function uploadPoster(array $file): ?string
 }
 
 /**
+ * Upload foto profil (avatar) user ke folder /uploads
+ */
+function uploadAvatar(array $file): ?string
+{
+    if (empty($file['name']) || $file['error'] !== UPLOAD_ERR_OK) {
+        return null;
+    }
+
+    $allowedExts = ['jpg', 'jpeg', 'png', 'webp', 'svg'];
+    $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+    if (!in_array($ext, $allowedExts, true)) {
+        return null;
+    }
+
+    $uploadDir = dirname(__DIR__) . '/uploads/';
+    if (!is_dir($uploadDir)) {
+        mkdir($uploadDir, 0775, true);
+    }
+
+    $filename = 'avatar-' . time() . '-' . random_int(100, 999) . '.' . $ext;
+    if (move_uploaded_file($file['tmp_name'], $uploadDir . $filename)) {
+        return $filename;
+    }
+
+    return null;
+}
+
+function avatarUrl(?string $avatar): ?string
+{
+    if (!$avatar) {
+        return null;
+    }
+    if (str_starts_with($avatar, 'http://') || str_starts_with($avatar, 'https://')) {
+        return $avatar;
+    }
+    return baseUrl('uploads/' . $avatar);
+}
+
+function userInitials(string $name): string
+{
+    $parts = preg_split('/\s+/', trim($name));
+    $initials = '';
+    foreach (array_slice($parts, 0, 2) as $p) {
+        $initials .= mb_strtoupper(mb_substr($p, 0, 1));
+    }
+    return $initials ?: 'U';
+}
+
+/**
  * Generate kursi otomatis saat studio dibuat atau diubah ukurannya
  */
 function generateStudioSeats(PDO $pdo, int $studioId, int $rows, int $cols, string $type): void

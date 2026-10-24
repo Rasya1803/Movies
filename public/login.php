@@ -22,10 +22,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         setFlash('danger', 'Akun Anda sedang dinonaktifkan oleh Admin.');
     } else {
         $_SESSION['user'] = [
-            'id'    => (int)$user['id'],
-            'name'  => $user['name'],
-            'email' => $user['email'],
-            'role'  => $user['role'],
+            'id'     => (int)$user['id'],
+            'name'   => $user['name'],
+            'email'  => $user['email'],
+            'role'   => $user['role'],
+            'avatar' => $user['avatar'] ?? null,
         ];
         setFlash('success', 'Selamat datang kembali, ' . $user['name'] . '!');
         if ($user['role'] === 'admin') {
