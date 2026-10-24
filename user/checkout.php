@@ -5,6 +5,18 @@ require_once __DIR__ . '/../includes/functions.php';
 requireLogin();
 $user = currentUser();
 
+// Pastikan kolom points_used tersedia di tabel bookings
+$colCheck = $pdo->query("SHOW COLUMNS FROM bookings LIKE 'points_used'")->fetch();
+if (!$colCheck) {
+    $pdo->exec("ALTER TABLE bookings ADD COLUMN points_used INT NOT NULL DEFAULT 0 AFTER discount_amount");
+}
+
+// Ambil poin terbaru milik user dari database
+$uStmt = $pdo->prepare("SELECT points FROM users WHERE id = ?");
+$uStmt->execute([$user['id']]);
+$userPoints = (int)$uStmt->fetchColumn();
+$pointValueRupiah = 1000; // 1 Poin = Rp 1.000
+
 $bookingId = (int)($_GET['id'] ?? $_POST['booking_id'] ?? 0);
 $stmt = $pdo->prepare("
     SELECT b.*, s.start_time, s.price AS seat_price, m.title AS movie_title,
@@ -70,12 +82,44 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 ? (int)round($baseSubtotal * ((int)$promo['value'] / 100))
                 : (int)$promo['value'];
             $discount = min($discount, $baseSubtotal);
-            $newTotal = $baseSubtotal - $discount;
+            $afterPromo = $baseSubtotal - $discount;
 
-            $upd = $pdo->prepare("UPDATE bookings SET promo_id = ?, discount_amount = ?, total_price = ? WHERE id = ?");
-            $upd->execute([$promo['id'], $discount, $newTotal, $bookingId]);
+            // Sesuaikan poin yang dipakai jika melebihi sisa tagihan setelah promo
+            $pointsUsed = min((int)$booking['points_used'], $userPoints, (int)floor($afterPromo / $pointValueRupiah));
+            $pointsDiscount = $pointsUsed * $pointValueRupiah;
+            $newTotal = max(0, $afterPromo - $pointsDiscount);
+
+            $upd = $pdo->prepare("UPDATE bookings SET promo_id = ?, discount_amount = ?, points_used = ?, total_price = ? WHERE id = ?");
+            $upd->execute([$promo['id'], $discount, $pointsUsed, $newTotal, $bookingId]);
             setFlash('success', 'Kode promo ' . $code . ' berhasil dipasang! Hemat ' . rupiah($discount));
         }
+        header('Location: checkout.php?id=' . $bookingId);
+        exit;
+    }
+
+    if ($action === 'redeem_points') {
+        $afterPromo = max(0, $baseSubtotal - (int)$booking['discount_amount']);
+        $maxPointsUsable = (int)floor($afterPromo / $pointValueRupiah);
+        $pointsToUse = min($userPoints, $maxPointsUsable);
+
+        if ($pointsToUse <= 0) {
+            setFlash('danger', 'Poin belum cukup atau tagihan sudah Rp 0.');
+        } else {
+            $pointsDiscount = $pointsToUse * $pointValueRupiah;
+            $newTotal = max(0, $afterPromo - $pointsDiscount);
+            $upd = $pdo->prepare("UPDATE bookings SET points_used = ?, total_price = ? WHERE id = ?");
+            $upd->execute([$pointsToUse, $newTotal, $bookingId]);
+            setFlash('success', $pointsToUse . ' Poin berhasil ditukar menjadi diskon ' . rupiah($pointsDiscount) . '!');
+        }
+        header('Location: checkout.php?id=' . $bookingId);
+        exit;
+    }
+
+    if ($action === 'remove_points') {
+        $newTotal = max(0, $baseSubtotal - (int)$booking['discount_amount']);
+        $upd = $pdo->prepare("UPDATE bookings SET points_used = 0, total_price = ? WHERE id = ?");
+        $upd->execute([$newTotal, $bookingId]);
+        setFlash('info', 'Penggunaan poin loyalitas dibatalkan.');
         header('Location: checkout.php?id=' . $bookingId);
         exit;
     }
@@ -87,9 +131,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $method = 'QRIS';
         }
 
+        $pointsUsed = min((int)$booking['points_used'], $userPoints);
+
         $pdo->beginTransaction();
-        $upd = $pdo->prepare("UPDATE bookings SET status = 'paid' WHERE id = ? AND status = 'pending'");
-        $upd->execute([$bookingId]);
+        $upd = $pdo->prepare("UPDATE bookings SET status = 'paid', points_used = ? WHERE id = ? AND status = 'pending'");
+        $upd->execute([$pointsUsed, $bookingId]);
 
         $insPay = $pdo->prepare("INSERT INTO payments (booking_id, method, amount, paid_at) VALUES (?, ?, ?, NOW())");
         $insPay->execute([$bookingId, $method, $booking['total_price']]);
@@ -99,12 +145,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $decPromo->execute([$booking['promo_id']]);
         }
 
-        // Tambah poin loyalitas (1 poin tiap Rp10.000)
+        // Potong poin yang ditukar dan tambahkan poin baru dari total pembayaran (1 poin tiap Rp10.000)
         $earnedPoints = (int)floor((int)$booking['total_price'] / 10000);
-        if ($earnedPoints > 0) {
-            $ptStmt = $pdo->prepare("UPDATE users SET points = points + ? WHERE id = ?");
-            $ptStmt->execute([$earnedPoints, $user['id']]);
-        }
+        $netPointChange = $earnedPoints - $pointsUsed;
+        $ptStmt = $pdo->prepare("UPDATE users SET points = GREATEST(0, points + ?) WHERE id = ?");
+        $ptStmt->execute([$netPointChange, $user['id']]);
 
         $pdo->commit();
         setFlash('success', 'Pembayaran berhasil! Ini adalah E-Ticket Anda.');
@@ -138,7 +183,7 @@ require_once __DIR__ . '/../includes/layout/header.php';
     <div class="card">
         <h3 style="margin-bottom:16px;">Simulasi Pembayaran</h3>
 
-        <form method="POST" style="margin-bottom:24px;padding-bottom:20px;border-bottom:1px solid var(--border);">
+        <form method="POST" style="margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid var(--border);">
             <input type="hidden" name="action" value="apply_promo">
             <label for="promo_code" style="display:block;font-size:14px;font-weight:500;margin-bottom:6px;">Punya Kode Promo? (Contoh: <code>HEMAT20</code> atau <code>NONTON10K</code>)</label>
             <div style="display:flex;gap:10px;">
@@ -146,6 +191,29 @@ require_once __DIR__ . '/../includes/layout/header.php';
                 <button type="submit" class="btn btn-outline">Pakai</button>
             </div>
         </form>
+
+        <!-- Tukar Poin Loyalitas -->
+        <div style="margin-bottom:24px;padding-bottom:20px;border-bottom:1px solid var(--border);">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;">
+                <div>
+                    <strong style="font-size:0.95rem;">Poin Loyalitas Anda: <span class="mono text-accent"><?= $userPoints ?> Poin</span></strong>
+                    <p class="text-muted" style="font-size:0.84rem;">1 Poin = <?= rupiah($pointValueRupiah) ?> (Dapat ditukar langsung jadi potongan harga)</p>
+                </div>
+                <?php if ((int)$booking['points_used'] > 0): ?>
+                    <form method="POST">
+                        <input type="hidden" name="action" value="remove_points">
+                        <button type="submit" class="btn btn-outline btn-sm text-danger">Batalkan Poin (-<?= (int)$booking['points_used'] ?> Poin)</button>
+                    </form>
+                <?php elseif ($userPoints > 0): ?>
+                    <form method="POST">
+                        <input type="hidden" name="action" value="redeem_points">
+                        <button type="submit" class="btn btn-outline btn-sm">Tukar <?= $userPoints ?> Poin (-<?= rupiah($userPoints * $pointValueRupiah) ?>)</button>
+                    </form>
+                <?php else: ?>
+                    <span class="badge badge-info">Belum ada poin</span>
+                <?php endif; ?>
+            </div>
+        </div>
 
         <form method="POST">
             <input type="hidden" name="action" value="pay">
@@ -195,6 +263,12 @@ require_once __DIR__ . '/../includes/layout/header.php';
                 <div style="display:flex;justify-content:space-between;" class="text-success">
                     <span>Diskon Promo (<?= e($booking['promo_code']) ?>):</span>
                     <span class="mono">- <?= rupiah($booking['discount_amount']) ?></span>
+                </div>
+            <?php endif; ?>
+            <?php if ((int)$booking['points_used'] > 0): ?>
+                <div style="display:flex;justify-content:space-between;" class="text-success">
+                    <span>Tukar Poin (<?= (int)$booking['points_used'] ?> Poin):</span>
+                    <span class="mono">- <?= rupiah((int)$booking['points_used'] * $pointValueRupiah) ?></span>
                 </div>
             <?php endif; ?>
             <div style="padding-top:10px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;">

@@ -123,6 +123,7 @@ CREATE TABLE bookings (
     showtime_id INT NOT NULL,
     promo_id INT DEFAULT NULL,
     discount_amount INT NOT NULL DEFAULT 0,
+    points_used INT NOT NULL DEFAULT 0,
     total_price INT NOT NULL,
     status ENUM('pending', 'paid', 'cancelled', 'expired') NOT NULL DEFAULT 'pending',
     expires_at DATETIME NOT NULL,
