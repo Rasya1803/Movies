@@ -3,7 +3,7 @@
     <div class="container footer-inner">
         <div>
             <strong>Cine<span class="text-accent">Verse</span></strong>
-            <span class="text-muted"> — Pemesanan Tiket Bioskop Lokal (PHP 8 + MySQL PDO)</span>
+            <span class="text-muted"> — Pengalaman Nonton Bioskop Terbaik, Pesan Kursi Lebih Cepat</span>
         </div>
         <div class="text-muted">
             &copy; <?= date('Y') ?> CineVerse

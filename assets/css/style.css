@@ -372,6 +372,15 @@ a {
     margin-bottom: 32px;
 }
 
+.hero-badge {
+    margin-bottom: 12px;
+}
+
+.hero .badge-warning {
+    background: rgba(252, 163, 17, 0.2);
+    color: var(--accent);
+}
+
 .hero h1 {
     color: #FFFFFF;
     margin-bottom: 12px;
@@ -381,6 +390,22 @@ a {
     color: rgba(255, 255, 255, 0.82);
     margin-bottom: 20px;
     max-width: 65ch;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.hero-actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.hero-meta {
+    color: rgba(255, 255, 255, 0.78);
+    font-size: 0.88rem;
 }
 
 .hero-poster {
@@ -389,6 +414,20 @@ a {
     object-fit: cover;
     border-radius: 10px;
     border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.empty-state-card {
+    text-align: center;
+    padding: 36px 24px;
+}
+
+.empty-state-card h3 {
+    margin-bottom: 8px;
+}
+
+.empty-state-card p {
+    max-width: 52ch;
+    margin: 0 auto 16px;
 }
 
 /* Movie Grid & Card */
@@ -442,12 +481,28 @@ a {
     border-radius: 6px;
 }
 
+.rating-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: rgba(20, 33, 61, 0.92);
+    color: var(--accent);
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 6px;
+}
+
 .movie-body {
     padding: 16px;
     display: flex;
     flex-direction: column;
     gap: 8px;
     flex: 1;
+}
+
+.movie-body .btn {
+    margin-top: auto;
 }
 
 .movie-title {
@@ -472,6 +527,16 @@ a {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+}
+
+.movie-telemetry {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    padding-top: 6px;
+    border-top: 1px dashed var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
 
 /* Structural Skeletons */
@@ -1004,10 +1069,33 @@ th {
 
 /* Responsive */
 @media (max-width: 768px) {
+    .navbar-inner {
+        gap: 10px;
+    }
+
+    .nav-links {
+        width: 100%;
+        order: 3;
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        padding-bottom: 4px;
+    }
+
+    .nav-links a {
+        white-space: nowrap;
+        padding: 6px 10px;
+        font-size: 0.86rem;
+    }
+
     .hero,
     .detail-grid,
     .booking-layout {
         grid-template-columns: 1fr;
+    }
+
+    .hero {
+        padding: 24px 20px;
+        gap: 20px;
     }
 
     .ticket-pass {
@@ -1031,6 +1119,8 @@ th {
 
     .hero-poster {
         max-width: 180px;
+        margin: 0 auto;
+        display: block;
     }
 }
 

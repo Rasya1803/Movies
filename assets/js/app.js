@@ -2,10 +2,13 @@ document.addEventListener('DOMContentLoaded', function () {
     // 1. Toggle Dark Mode dengan localStorage
     var themeBtn = document.getElementById('themeToggle');
     if (themeBtn) {
+        var currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+        themeBtn.setAttribute('aria-pressed', currentTheme === 'dark' ? 'true' : 'false');
         themeBtn.addEventListener('click', function () {
             var html = document.documentElement;
             var next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
             html.setAttribute('data-theme', next);
+            themeBtn.setAttribute('aria-pressed', next === 'dark' ? 'true' : 'false');
             localStorage.setItem('cineverse_theme', next);
         });
     }
@@ -75,7 +78,7 @@ document.addEventListener('DOMContentLoaded', function () {
                                     '<span>' + (m.genres || '-') + '</span>' +
                                     '<span class="mono">' + m.duration_min + 'm</span>' +
                                 '</div>' +
-                                '<a href="movie.php?id=' + m.id + '" class="btn btn-primary btn-sm" style="margin-top:auto;">Lihat Jadwal</a>' +
+                                '<a href="movie.php?id=' + m.id + '" class="btn btn-primary btn-sm">Pilih Jadwal</a>' +
                             '</div>' +
                         '</article>'
                     );
