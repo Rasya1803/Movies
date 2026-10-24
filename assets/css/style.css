@@ -873,6 +873,13 @@ th {
 }
 
 /* E-Ticket Admission Pass (Bolder Cinema Silhouette) */
+.ticket-header-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
 .ticket-pass {
     max-width: 860px;
     margin: 0 auto;
@@ -880,8 +887,12 @@ th {
     border: 1px solid var(--border);
     border-radius: 16px;
     display: grid;
-    grid-template-columns: 1fr 2px 240px;
+    grid-template-columns: 1fr 2px 248px;
     overflow: hidden;
+}
+
+.ticket-pass-inactive .qr-box {
+    opacity: 0.45;
 }
 
 .ticket-main {
@@ -901,10 +912,47 @@ th {
     border-bottom: 2px solid var(--accent);
 }
 
+.ticket-banner .badge-warning {
+    background: rgba(252, 163, 17, 0.22);
+    color: var(--accent);
+}
+
+.ticket-banner .badge-paid,
+.ticket-banner .badge-success {
+    background: rgba(61, 183, 127, 0.22);
+    color: #5CE0A2;
+}
+
+.ticket-banner .badge-danger,
+.ticket-banner .badge-cancelled,
+.ticket-banner .badge-expired {
+    background: rgba(229, 96, 95, 0.24);
+    color: #FF8A89;
+}
+
 .ticket-brand {
     display: flex;
     align-items: center;
     gap: 12px;
+}
+
+.ticket-brand-title {
+    color: #FFFFFF;
+    font-size: 1rem;
+    display: block;
+    line-height: 1.2;
+}
+
+.ticket-brand-sub {
+    color: rgba(255, 255, 255, 0.78);
+    font-size: 14px;
+}
+
+.ticket-badges {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
 }
 
 .ticket-body {
@@ -919,6 +967,18 @@ th {
     grid-template-columns: 88px 1fr;
     gap: 18px;
     align-items: center;
+}
+
+.ticket-film-tags {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+}
+
+.ticket-film-note {
+    margin-top: 4px;
 }
 
 .ticket-poster {
@@ -942,13 +1002,16 @@ th {
     background: var(--surface-alt);
     border: 1px solid var(--border);
     border-radius: 12px;
-    padding: 14px 16px;
+    padding: 12px;
 }
 
 .telemetry-cell {
     display: flex;
     flex-direction: column;
+    justify-content: center;
     gap: 4px;
+    padding: 8px 10px;
+    border-radius: 8px;
 }
 
 .telemetry-label {
@@ -965,10 +1028,6 @@ th {
 .telemetry-highlight {
     background: rgba(252, 163, 17, 0.14);
     border: 1px solid var(--accent);
-    border-radius: 8px;
-    padding: 6px 10px;
-    margin: -6px -6px;
-    justify-content: center;
 }
 
 .telemetry-seat {
@@ -987,7 +1046,7 @@ th {
     flex-wrap: wrap;
     padding-top: 14px;
     border-top: 1px solid var(--border);
-    font-size: 0.88rem;
+    font-size: 0.9rem;
 }
 
 .ticket-perforation {
@@ -1027,7 +1086,7 @@ th {
 }
 
 .ticket-stub-header {
-    font-size: 0.75rem;
+    font-size: 14px;
     color: var(--text-muted);
     font-weight: 600;
 }
@@ -1040,6 +1099,22 @@ th {
     display: flex;
     align-items: center;
     justify-content: center;
+    min-width: 164px;
+    min-height: 164px;
+}
+
+.qr-fallback {
+    color: #14213D;
+    font-weight: 700;
+    font-size: 0.9rem;
+    text-align: center;
+    padding: 12px;
+}
+
+.ticket-code-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
 .ticket-code-pill {
@@ -1049,6 +1124,15 @@ th {
     border-radius: 8px;
     font-size: 1rem;
     font-weight: 700;
+}
+
+.ticket-stub-seat {
+    font-size: 14px;
+    text-align: center;
+}
+
+.ticket-stub-seat-val {
+    color: var(--text);
 }
 
 /* Footer */
@@ -1102,6 +1186,11 @@ th {
         grid-template-columns: 1fr;
     }
 
+    .ticket-banner,
+    .ticket-body {
+        padding: 18px;
+    }
+
     .ticket-perforation {
         border-left: none;
         border-top: 2px dashed var(--border);
@@ -1124,6 +1213,21 @@ th {
     }
 }
 
+@media (max-width: 480px) {
+    .ticket-film {
+        grid-template-columns: 72px 1fr;
+        gap: 14px;
+    }
+
+    .ticket-poster {
+        width: 72px;
+    }
+
+    .ticket-telemetry {
+        grid-template-columns: 1fr;
+    }
+}
+
 /* Reduced Motion */
 @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after {
@@ -1140,9 +1244,16 @@ th {
     body {
         background: #FFFFFF;
         color: #000000;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
     }
     .ticket-pass {
-        border: 2px solid #000000;
+        border: 2px solid #14213D;
         box-shadow: none;
+        grid-template-columns: 1fr 2px 230px;
+    }
+    .ticket-perforation::before,
+    .ticket-perforation::after {
+        background: #FFFFFF;
     }
 }
