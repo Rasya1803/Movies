@@ -11,7 +11,7 @@ Tujuan produk:
 - Pengunjung bisa melihat film, memilih jadwal dan kursi, lalu memesan tiket.
 - Operator menjalankan kegiatan harian bioskop: validasi tiket dan pengelolaan jadwal tayang.
 - Admin mengelola semua data master dan melihat laporan penjualan.
-- Pembuat belajar PHP + PDO, SQL JOIN, session, pemrosesan form (`GET`/`POST`), upload file, dan CSS modern (murni HTML + CSS tanpa JavaScript) lewat satu proyek yang terasa seperti produk sungguhan.
+- Pembuat belajar PHP + PDO, SQL JOIN, session, upload file, fetch/AJAX, dan CSS modern lewat satu proyek yang terasa seperti produk sungguhan.
 
 ## 2. Ruang Lingkup, Asumsi, dan Tech Stack
 
@@ -21,7 +21,6 @@ Asumsi:
 
 - Keamanan tidak jadi fokus: tanpa token CSRF, tanpa pembatasan percobaan login, validasi input seperlunya.
 - **Password tidak di-hash (plaintext):** Password disimpan dan dicocokkan langsung dalam bentuk teks biasa di database supaya mudah dicek lewat phpMyAdmin saat belajar. Query database tetap memakai prepared statement PDO.
-- **Tanpa JavaScript (Zero JS):** Seluruh interaksi (pilih kursi dengan `<input type="checkbox">`, pencarian/filter form `GET`, validasi kode booking, hingga grafik bar di dashboard admin) dibangun murni dengan PHP, HTML5, dan CSS3.
 - Pembayaran hanya simulasi: tombol "Bayar" mengubah status pesanan, tanpa payment gateway.
 - Data film diisi manual oleh admin, poster di-upload ke folder lokal.
 - Di luar lingkup: email atau SMS asli, aplikasi mobile, payment gateway nyata, deploy ke server.
@@ -31,8 +30,8 @@ Asumsi:
 | Bahasa backend | PHP 8.x native, tanpa framework | Konsep dasar terlihat jelas saat belajar |
 | Database | MySQL / MariaDB lewat PDO | Bawaan XAMPP dan Laragon |
 | Server lokal | XAMPP atau Laragon | Apache + MySQL siap pakai |
-| Frontend | HTML5 dan CSS3 vanilla (tanpa JavaScript) | Fokus penuh pada alur server-side PHP dan CSS modern |
-| Visualisasi & Tiket | Grafik CSS murni & Kode Booking unik | Tanpa ketergantungan library JS eksternal |
+| Frontend | HTML, CSS, JavaScript vanilla | Tanpa build tool |
+| Library via CDN | Chart.js (grafik), qrcode.js (QR tiket), html5-qrcode (scan kamera) | Ringan dan mudah dipasang |
 | Font | Google Fonts | Lihat bagian Desain UI/UX |
 
 ## 3. Peran Pengguna dan Hak Akses
@@ -73,13 +72,13 @@ Prioritas: **P1** inti, dibuat lebih dulu. **P2** fitur modern yang menaikkan ku
 | Pilih kursi interaktif | Denah kursi per studio dengan status kosong, dipilih, terisi; maksimal 6 kursi per pesanan | P1 |
 | Simulasi pembayaran | Pilih metode (QRIS, transfer, e-wallet palsu) lalu klik Bayar | P1 |
 | Riwayat pesanan | Daftar pesanan beserta status dan tiketnya | P1 |
-| Pencarian dan filter | Cari judul, filter genre atau bahasa lewat form `GET` PHP | P2 |
-| Batas waktu pembayaran | Kursi ditahan 10 menit (`expires_at`), dicek otomatis oleh PHP dan lewat batas pesanan kedaluwarsa | P2 |
-| E-ticket | Tiket digital dengan kode booking unik, siap cetak lewat stylesheet `@media print` | P2 |
+| Pencarian dan filter langsung | Cari judul, filter genre atau bahasa tanpa reload (fetch + JSON) | P2 |
+| Timer pembayaran | Kursi ditahan 10 menit, lewat batas pesanan otomatis kedaluwarsa | P2 |
+| E-ticket QR | Tiket digital dengan kode booking dan QR code, bisa dicetak | P2 |
 | Kode promo | Voucher diskon persen atau nominal | P2 |
 | Watchlist | Simpan film ke daftar "Ingin ditonton" | P2 |
 | Rating dan ulasan | Bintang 1 sampai 5 dan komentar untuk film yang sudah ditonton | P2 |
-| Mode gelap | Toggle terang/gelap berbasis session/cookie PHP dan CSS Variables | P2 |
+| Mode gelap | Toggle terang/gelap, pilihan disimpan di localStorage | P2 |
 | Pre-order makanan | Tambah popcorn dan minuman ke pesanan | P3 |
 | Poin loyalitas | 1 poin tiap Rp10.000, poin ditukar diskon | P3 |
 
@@ -87,7 +86,7 @@ Prioritas: **P1** inti, dibuat lebih dulu. **P2** fitur modern yang menaikkan ku
 
 | Fitur | Deskripsi | Prioritas |
 | --- | --- | --- |
-| Validasi tiket | Input kode booking via form PHP; tiket ditandai terpakai dan ditolak jika dipakai dua kali | P1 |
+| Validasi tiket | Input kode booking atau scan QR lewat kamera; tiket ditandai terpakai dan ditolak jika dipakai dua kali | P1 |
 | Kelola jadwal tayang | Tambah, ubah, batalkan jadwal (film, studio, jam, harga) | P1 |
 | Jual tiket di loket | Pesan tiket atas nama pembeli tanpa akun, bayar tunai | P2 |
 | Daftar penonton per sesi | Kursi terisi dan jumlah tiket tiap jadwal | P2 |
@@ -97,7 +96,7 @@ Prioritas: **P1** inti, dibuat lebih dulu. **P2** fitur modern yang menaikkan ku
 
 | Fitur | Deskripsi | Prioritas |
 | --- | --- | --- |
-| Dashboard | Kartu ringkas (pendapatan, tiket terjual, film terlaris) dan grafik bar CSS murni | P1 |
+| Dashboard | Kartu ringkas (pendapatan, tiket terjual, film terlaris) dan grafik Chart.js | P1 |
 | CRUD film | Tambah, ubah, hapus film, upload poster, atur status tayang | P1 |
 | CRUD studio dan kursi | Atur jumlah baris dan kolom kursi serta tipe studio (Regular, Premier) | P1 |
 | Kelola akun | Lihat user dan operator, ubah peran, nonaktifkan akun | P1 |
@@ -167,13 +166,14 @@ Kombinasi navy dan amber: navy memberi kesan sinematik yang tenang, amber sepert
 
 Ketiganya tersedia gratis di Google Fonts. Kalau ingin bisa jalan tanpa internet, unduh file font dan pasang lewat `@font-face`.
 
-### Animasi (sedikit dan halus, murni CSS)
+### Animasi (sedikit dan halus)
 
-- Kartu film muncul dengan animasi `@keyframes` fade dan geser naik 16px, 400 ms.
+- Kartu film muncul dengan fade dan geser naik 16px saat masuk layar (IntersectionObserver), 400 ms.
 - Hover kartu film: naik 6px, poster membesar 5%, bayangan lembut, 200 ms.
-- Kursi (`<input type="checkbox">` + `<label>`): membesar sedikit saat di-hover dan berubah warna saat dipilih (`:checked`), 150 ms.
-- Tombol: warna berubah halus dan mengecil sedikit saat ditekan (`:active`).
-- Semua animasi hanya memakai CSS `transform` dan `opacity`, dan dimatikan bila pengguna mengaktifkan `prefers-reduced-motion`.
+- Kursi: membesar sedikit saat di-hover dan berubah warna saat dipilih, 150 ms.
+- Tombol: warna berubah halus dan mengecil sedikit saat ditekan.
+- Skeleton loading saat hasil pencarian diambil lewat fetch.
+- Semua animasi hanya memakai `transform` dan `opacity`, dan dimatikan bila pengguna mengaktifkan `prefers-reduced-motion`.
 
 ### Halaman utama dan tata letak
 
@@ -184,16 +184,16 @@ Grid maksimal 1200px, sudut membulat 12px, jarak antar elemen kelipatan 8px, nav
 | Beranda | Hero film unggulan, baris "Sedang Tayang", baris "Segera Hadir" |
 | Daftar film | Grid poster, kolom pencarian dan filter genre |
 | Detail film | Poster besar, sinopsis, trailer, jadwal per hari, ulasan |
-| Pilih kursi | Layar di atas, denah kursi (checkbox CSS), tombol lanjut ke checkout |
-| Checkout | Informasi batas waktu 10 menit (`expires_at`), kode promo, metode bayar |
-| E-ticket | Kartu tiket dengan kode booking unik dan tampilan siap cetak (`@media print`) |
+| Pilih kursi | Layar di atas, denah kursi, ringkasan pesanan di samping |
+| Checkout | Timer 10 menit, kode promo, metode bayar |
+| E-ticket | Kartu tiket dengan QR code dan tombol cetak |
 | Login dan registrasi | Form di tengah dengan latar poster buram |
-| Panel Operator | Kotak input validasi kode tiket, jadwal hari ini |
-| Dashboard Admin | Kartu ringkas, grafik bar CSS, tabel kelola data dengan sidebar |
+| Panel Operator | Kotak input scan tiket, jadwal hari ini |
+| Dashboard Admin | Kartu ringkas, grafik, tabel kelola data dengan sidebar |
 
 ## 8. Arsitektur dan Struktur Folder
 
-Aplikasi dibuat sederhana tanpa framework dan tanpa JavaScript: halaman PHP per peran memakai file bersama di `includes/` untuk koneksi database, cek login, dan fungsi umum.
+Aplikasi dibuat sederhana tanpa framework: halaman PHP per peran memakai file bersama di `includes/` untuk koneksi database, cek login, dan fungsi umum.
 
 &#91;embedded content: arsitektur aplikasi · 4 lapisan\]
 
@@ -209,10 +209,12 @@ cineverse/
     layout/             header.php, footer.php, navbar.php
   public/               beranda, katalog, detail film, login, registrasi
   user/                 pilih kursi, checkout, e-ticket, riwayat, watchlist
-  operator/             validasi tiket, jadwal tayang, penjualan loket
+  operator/             scan tiket, jadwal tayang, penjualan loket
   admin/                dashboard, film, studio, akun, promo, laporan
+  api/                  endpoint JSON untuk fetch (pencarian, kursi, validasi)
   assets/
-    css/style.css       CSS variables, komponen, animasi CSS
+    css/style.css       CSS variables, komponen, animasi
+    js/                 app.js, seat-map.js, scanner.js, charts.js
     img/
   uploads/              poster film
 ```
@@ -225,13 +227,13 @@ cineverse/
 
 Produk dianggap selesai bila semua poin ini lolos:
 
-- [ ] User bisa daftar, login, memesan 2 kursi, membayar (simulasi), dan melihat e-ticket.
+- [ ] User bisa daftar, login, memesan 2 kursi, membayar (simulasi), dan melihat e-ticket QR.
 - [ ] Dua user tidak bisa memesan kursi yang sama di jadwal yang sama.
 - [ ] Pesanan berstatus pending lewat 10 menit otomatis kedaluwarsa dan kursinya bebas lagi.
-- [ ] Operator bisa memvalidasi kode tiket, dan tiket yang sama ditolak saat divalidasi kedua kali.
+- [ ] Operator bisa memvalidasi tiket, dan tiket yang sama ditolak saat dipindai kedua kali.
 - [ ] Operator bisa menambah jadwal tayang dan jadwal itu langsung muncul di halaman film.
 - [ ] Admin bisa menambah film beserta poster dan film langsung tampil di beranda.
-- [ ] Dashboard admin menampilkan pendapatan dan grafik bar CSS yang sesuai data pesanan.
+- [ ] Dashboard admin menampilkan pendapatan dan grafik yang sesuai data pesanan.
 - [ ] User biasa tidak bisa membuka halaman operator atau admin lewat URL.
 - [ ] Mode gelap berfungsi dan tampilan tetap rapi di layar HP.
 
@@ -243,10 +245,10 @@ Urutan ini dibuat supaya tiap tahap menghasilkan sesuatu yang sudah bisa dicoba 
 2. **Login dan peran.** Registrasi, login (password plaintext), logout, session, dan penjaga halaman berdasarkan peran.
 3. **Katalog film.** CRUD film oleh admin, halaman beranda, daftar film, dan detail film.
 4. **Studio, kursi, dan jadwal.** CRUD studio dengan pembuatan kursi otomatis, lalu pengelolaan jadwal tayang oleh operator.
-5. **Pemesanan.** Denah kursi dengan HTML checkbox + CSS, simpan pesanan, hitung harga, batas waktu 10 menit, dan simulasi pembayaran.
-6. **E-ticket dan validasi.** E-ticket dengan kode booking unik, panel operator untuk memvalidasi kode tiket.
-7. **Dashboard dan laporan.** Kartu ringkas, grafik bar CSS, laporan penjualan dan ekspor CSV.
-8. **Poles.** Animasi CSS, mode gelap, responsif, lalu uji semua kriteria penerimaan.
+5. **Pemesanan.** Denah kursi interaktif, simpan pesanan, hitung harga, timer, dan simulasi pembayaran.
+6. **E-ticket dan validasi.** QR code di tiket, panel operator untuk memindai dan memvalidasi tiket.
+7. **Dashboard dan laporan.** Kartu ringkas, grafik Chart.js, laporan penjualan dan ekspor CSV.
+8. **Poles.** Animasi, mode gelap, responsif, lalu uji semua kriteria penerimaan.
 9. **Opsional (P2 dan P3).** Promo, watchlist, ulasan, pre-order makanan, poin loyalitas.
 
 Setelah semuanya jadi, langkah belajar berikutnya yang wajar: menambahkan keamanan (token CSRF, validasi input ketat, batas percobaan login), memindahkan proyek ke framework seperti Laravel, atau membuat API REST untuk aplikasi mobile.
