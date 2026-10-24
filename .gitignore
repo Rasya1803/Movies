@@ -1,0 +1,15 @@
+# OS & Editor files
+.DS_Store
+Thumbs.db
+Desktop.ini
+.vscode/
+.idea/
+
+# Environment & Logs
+.env
+*.log
+
+# Node / CLI caches & large binaries
+node_modules/
+.agents/skills/impeccable/scripts/bin/
+.impeccable/config.local.json
