@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 600" width="400" height="600">
+  <rect width="400" height="600" fill="#0E1320"/>
+  <circle cx="200" cy="230" r="120" fill="none" stroke="#FCA311" stroke-width="2" opacity="0.4"/>
+  <circle cx="200" cy="230" r="85" fill="#171E30" stroke="#E8EAF0" stroke-width="3"/>
+  <ellipse cx="200" cy="230" rx="145" ry="38" fill="none" stroke="#FCA311" stroke-width="4" transform="rotate(-18 200 230)"/>
+  <circle cx="290" cy="155" r="10" fill="#FCA311"/>
+  <text x="200" y="465" text-anchor="middle" fill="#FFFFFF" font-family="sans-serif" font-weight="700" font-size="26">ORBITAL</text>
+  <text x="200" y="500" text-anchor="middle" fill="#FCA311" font-family="sans-serif" font-weight="700" font-size="26">HORIZON</text>
+  <text x="200" y="545" text-anchor="middle" fill="#9AA3B5" font-family="monospace" font-size="13">SCI-FI • ADVENTURE • R13+</text>
+</svg>

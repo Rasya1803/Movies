@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 600" width="400" height="600">
+  <rect width="400" height="600" fill="#14213D"/>
+  <circle cx="200" cy="220" r="110" fill="#FCA311" opacity="0.18"/>
+  <circle cx="200" cy="220" r="72" fill="#FCA311" opacity="0.85"/>
+  <path d="M200 130 L228 240 L310 265 L228 278 L200 340 L172 278 L90 265 L172 240 Z" fill="#FFFFFF"/>
+  <rect x="40" y="420" width="320" height="2" fill="#FCA311" opacity="0.5"/>
+  <text x="200" y="465" text-anchor="middle" fill="#FFFFFF" font-family="sans-serif" font-weight="700" font-size="24">GARUDA DI UJUNG</text>
+  <text x="200" y="498" text-anchor="middle" fill="#FCA311" font-family="sans-serif" font-weight="700" font-size="26">LANGIT</text>
+  <text x="200" y="545" text-anchor="middle" fill="#9AA3B5" font-family="monospace" font-size="13">ACTION • ADVENTURE • R13+</text>
+</svg>

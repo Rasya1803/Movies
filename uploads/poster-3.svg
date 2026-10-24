@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 600" width="400" height="600">
+  <rect width="400" height="600" fill="#1B263B"/>
+  <circle cx="200" cy="250" r="95" fill="#FCA311" opacity="0.9"/>
+  <rect x="70" y="250" width="260" height="90" rx="10" fill="#14213D" stroke="#FFFFFF" stroke-width="3"/>
+  <rect x="95" y="270" width="45" height="35" rx="4" fill="#FCA311"/>
+  <rect x="155" y="270" width="45" height="35" rx="4" fill="#FCA311"/>
+  <rect x="215" y="270" width="45" height="35" rx="4" fill="#FCA311"/>
+  <rect x="275" y="270" width="35" height="35" rx="4" fill="#FCA311"/>
+  <line x1="40" y1="355" x2="360" y2="355" stroke="#9AA3B5" stroke-width="4"/>
+  <text x="200" y="465" text-anchor="middle" fill="#FFFFFF" font-family="sans-serif" font-weight="700" font-size="24">SENJA DI STASIUN</text>
+  <text x="200" y="498" text-anchor="middle" fill="#FCA311" font-family="sans-serif" font-weight="700" font-size="26">KOTA</text>
+  <text x="200" y="545" text-anchor="middle" fill="#9AA3B5" font-family="monospace" font-size="13">DRAMA • SU</text>
+</svg>

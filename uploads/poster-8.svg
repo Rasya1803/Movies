@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 600" width="400" height="600">
+  <rect width="400" height="600" fill="#0B1120"/>
+  <rect x="90" y="180" width="45" height="170" fill="#171E30" stroke="#FCA311" stroke-width="2"/>
+  <rect x="150" y="130" width="55" height="220" fill="#14213D" stroke="#FCA311" stroke-width="3"/>
+  <rect x="220" y="160" width="50" height="190" fill="#171E30" stroke="#3DB77F" stroke-width="2"/>
+  <rect x="280" y="210" width="35" height="140" fill="#171E30" stroke="#FCA311" stroke-width="2"/>
+  <text x="200" y="465" text-anchor="middle" fill="#FFFFFF" font-family="sans-serif" font-weight="700" font-size="24">CYBER NUSANTARA</text>
+  <text x="200" y="500" text-anchor="middle" fill="#FCA311" font-family="sans-serif" font-weight="700" font-size="28">2099</text>
+  <text x="200" y="545" text-anchor="middle" fill="#9AA3B5" font-family="monospace" font-size="13">SCI-FI • ACTION • COMING SOON</text>
+</svg>

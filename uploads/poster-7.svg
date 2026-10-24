@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 600" width="400" height="600">
+  <rect width="400" height="600" fill="#1F1A17"/>
+  <rect x="130" y="190" width="120" height="110" rx="16" fill="#FCA311"/>
+  <path d="M250 210 H275 A25 25 0 0 1 275 265 H250" fill="none" stroke="#FCA311" stroke-width="12"/>
+  <rect x="105" y="310" width="170" height="14" rx="7" fill="#FFFFFF"/>
+  <text x="200" y="465" text-anchor="middle" fill="#FFFFFF" font-family="sans-serif" font-weight="700" font-size="24">WARUNG KOPI</text>
+  <text x="200" y="500" text-anchor="middle" fill="#FCA311" font-family="sans-serif" font-weight="700" font-size="26">DETEKTIF</text>
+  <text x="200" y="545" text-anchor="middle" fill="#9AA3B5" font-family="monospace" font-size="13">COMEDY • COMING SOON</text>
+</svg>

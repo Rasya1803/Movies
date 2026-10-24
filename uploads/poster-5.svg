@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 600" width="400" height="600">
+  <rect width="400" height="600" fill="#0E1726"/>
+  <polygon points="200,120 295,175 295,285 200,340 105,285 105,175" fill="none" stroke="#FCA311" stroke-width="4"/>
+  <polygon points="200,155 265,192 265,268 200,305 135,268 135,192" fill="#14213D" stroke="#FFFFFF" stroke-width="2"/>
+  <circle cx="200" cy="230" r="22" fill="#FCA311"/>
+  <text x="200" y="465" text-anchor="middle" fill="#FFFFFF" font-family="sans-serif" font-weight="700" font-size="26">PROTOKOL</text>
+  <text x="200" y="500" text-anchor="middle" fill="#FCA311" font-family="sans-serif" font-weight="700" font-size="26">BAYANGAN</text>
+  <text x="200" y="545" text-anchor="middle" fill="#9AA3B5" font-family="monospace" font-size="13">ACTION • THRILLER • D17+</text>
+</svg>

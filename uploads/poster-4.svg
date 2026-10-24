@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 600" width="400" height="600">
+  <rect width="400" height="600" fill="#151318"/>
+  <circle cx="200" cy="200" r="80" fill="#D64545" opacity="0.25"/>
+  <polygon points="110,340 110,220 160,180 210,220 210,250 290,250 290,340" fill="#2A1E24" stroke="#E5605F" stroke-width="3"/>
+  <rect x="245" y="135" width="26" height="115" fill="#2A1E24" stroke="#E5605F" stroke-width="3"/>
+  <rect x="145" y="265" width="30" height="45" fill="#FCA311"/>
+  <text x="200" y="465" text-anchor="middle" fill="#FFFFFF" font-family="sans-serif" font-weight="700" font-size="26">PABRIK GULA</text>
+  <text x="200" y="500" text-anchor="middle" fill="#E5605F" font-family="sans-serif" font-weight="700" font-size="26">TUA</text>
+  <text x="200" y="545" text-anchor="middle" fill="#9AA3B5" font-family="monospace" font-size="13">HORROR • THRILLER • D17+</text>
+</svg>
