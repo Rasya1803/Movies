@@ -1,0 +1,199 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-24T19:23:00+07:00",
+  "title": "Design System: CineVerse",
+  "extensions": {
+    "colorMeta": {
+      "cinematic-navy": {
+        "role": "primary",
+        "displayName": "Cinematic Navy",
+        "canonical": "#14213D",
+        "tonalRamp": ["#080E1B", "#0E172B", "#14213D", "#1F325C", "#2E477D", "#4B68A3", "#7B93C4", "#C3CFE8"]
+      },
+      "projector-amber": {
+        "role": "primary",
+        "displayName": "Projector Amber",
+        "canonical": "#FCA311",
+        "tonalRamp": ["#3B2300", "#663E00", "#995E00", "#CC7E05", "#E59009", "#FCA311", "#FDBB4D", "#FEE2B3"]
+      },
+      "warm-paper": {
+        "role": "neutral",
+        "displayName": "Warm Paper",
+        "canonical": "#F7F7F5",
+        "tonalRamp": ["#1F1F1D", "#3B3B38", "#595955", "#7A7A75", "#A3A39E", "#CCCCCA", "#E6E6E3", "#F7F7F5"]
+      },
+      "theater-night": {
+        "role": "neutral",
+        "displayName": "Theater Night",
+        "canonical": "#0E1320",
+        "tonalRamp": ["#0E1320", "#171E30", "#1E273D", "#2A3350", "#424F73", "#647299", "#9AA3B5", "#E8EAF0"]
+      },
+      "ticket-emerald": {
+        "role": "secondary",
+        "displayName": "Ticket Emerald",
+        "canonical": "#2E9E6B",
+        "tonalRamp": ["#0B291B", "#144730", "#1E6B48", "#27875B", "#2E9E6B", "#3DB77F", "#74CFA5", "#BFEAD6"]
+      },
+      "velvet-crimson": {
+        "role": "secondary",
+        "displayName": "Velvet Crimson",
+        "canonical": "#D64545",
+        "tonalRamp": ["#330D0D", "#5C1818", "#8A2424", "#B33030", "#D64545", "#E5605F", "#EE8F8E", "#F8CACA"]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Judul utama halaman dan judul film unggulan pada Hero banner."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Subjudul bagian (Sedang Tayang, Segera Hadir) dan judul film pada E-Ticket."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Judul kartu panel, ringkasan pesanan, dan tombol utama."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Sinopsis film, ulasan penonton, dan isi tabel (maksimal 65ch)."
+      },
+      "label": {
+        "displayName": "Label / Telemetry Mono",
+        "purpose": "Koordinat kursi, kode booking, jam tayang, durasi, dan harga Rupiah (tabular-nums)."
+      }
+    },
+    "shadows": [
+      {
+        "name": "flat-hairline",
+        "value": "none",
+        "purpose": "Permukaan standar menggunakan border 1px solid tanpa bayangan (Flat-by-Default)."
+      }
+    ],
+    "motion": [
+      {
+        "name": "interaction-fast",
+        "value": "150ms ease-out",
+        "purpose": "Umpan balik klik tombol, pemilihan kursi, dan slot jadwal."
+      },
+      {
+        "name": "card-hover",
+        "value": "200ms ease-out",
+        "purpose": "Efek angkat kartu film (-6px) dan pembesaran poster (1.05) saat di-hover."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "mobile",
+        "value": "360px"
+      },
+      {
+        "name": "tablet",
+        "value": "768px"
+      },
+      {
+        "name": "desktop-container",
+        "value": "1200px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Action Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Tombol CTA utama beraksen Projector Amber untuk pemesanan tiket dan pembayaran.",
+      "html": "<button class=\"ds-btn-primary\">Pesan Tiket Sekarang</button>",
+      "css": ".ds-btn-primary { display: inline-flex; align-items: center; justify-content: center; padding: 10px 18px; border-radius: 10px; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.92rem; font-weight: 600; background-color: #FCA311; color: #14213D; border: 1px solid transparent; cursor: pointer; transition: transform 150ms ease-out, background-color 150ms ease-out; } .ds-btn-primary:hover { background-color: #E59009; } .ds-btn-primary:active { transform: scale(0.97); } .ds-btn-primary:focus-visible { outline: 2px solid #FCA311; outline-offset: 2px; }"
+    },
+    {
+      "name": "Secondary Navy Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Tombol sekunder berwarna Cinematic Navy untuk aksi pendukung.",
+      "html": "<button class=\"ds-btn-secondary\">Tersimpan di Watchlist</button>",
+      "css": ".ds-btn-secondary { display: inline-flex; align-items: center; justify-content: center; padding: 10px 18px; border-radius: 10px; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.92rem; font-weight: 600; background-color: #14213D; color: #FFFFFF; border: 1px solid transparent; cursor: pointer; transition: transform 150ms ease-out; } .ds-btn-secondary:active { transform: scale(0.97); } .ds-btn-secondary:focus-visible { outline: 2px solid #FCA311; outline-offset: 2px; }"
+    },
+    {
+      "name": "Interactive Studio Seat",
+      "kind": "custom",
+      "refersTo": "seat-selected",
+      "description": "Tombol kursi studio monospasi dengan 3 status: kosong, dipilih (Amber), dan terisi (Crimson).",
+      "html": "<div class=\"ds-seat-row\"><button class=\"ds-seat\">C3</button><button class=\"ds-seat ds-seat-selected\">C4</button><button class=\"ds-seat ds-seat-occupied\" disabled>C5</button></div>",
+      "css": ".ds-seat-row { display: inline-flex; gap: 8px; } .ds-seat { width: 42px; height: 38px; border-radius: 8px; border: 1px solid #E5E7EB; background: #F1F2F6; color: #1F2937; font-family: 'DM Mono', monospace; font-size: 0.8rem; cursor: pointer; transition: transform 150ms ease-out; } .ds-seat:hover:not(:disabled) { transform: scale(1.08); border-color: #FCA311; } .ds-seat-selected { background: #FCA311; color: #14213D; border-color: #FCA311; font-weight: 700; } .ds-seat-occupied { background: #D64545; color: #FFFFFF; border-color: #D64545; cursor: not-allowed; opacity: 0.75; }"
+    },
+    {
+      "name": "Form Input Field",
+      "kind": "input",
+      "refersTo": "card-surface",
+      "description": "Input teks dengan border tipis 1px dan sorotan fokus Projector Amber.",
+      "html": "<input type=\"text\" class=\"ds-input\" placeholder=\"Ketik Kode Booking (mis: CV-DEMO01)\" />",
+      "css": ".ds-input { width: 100%; max-width: 320px; padding: 10px 14px; font-family: 'DM Mono', monospace; font-size: 15px; background: #FFFFFF; color: #1F2937; border: 1px solid #E5E7EB; border-radius: 10px; } .ds-input:focus, .ds-input:focus-visible { border-color: #FCA311; outline: 2px solid #FCA311; outline-offset: 2px; }"
+    },
+    {
+      "name": "Sticky Cinema Navbar",
+      "kind": "nav",
+      "refersTo": "button-secondary",
+      "description": "Header navigasi Cinematic Navy dengan identitas merek CV dan pill profil pengguna.",
+      "html": "<div class=\"ds-nav\"><div class=\"ds-brand\"><span class=\"ds-mark\">CV</span><span>Cine<b style=\"color:#FCA311\">Verse</b></span></div><span class=\"ds-pill\"><span class=\"ds-avatar\">BS</span><strong>Budi Santoso</strong><small class=\"ds-role\">USER</small></span></div>",
+      "css": ".ds-nav { background: #14213D; color: #FFFFFF; padding: 12px 20px; border-radius: 12px; display: flex; align-items: center; justify-content: space-between; gap: 16px; font-family: 'Plus Jakarta Sans', sans-serif; } .ds-brand { display: inline-flex; align-items: center; gap: 10px; font-weight: 700; font-size: 1.15rem; } .ds-mark { width: 32px; height: 32px; border-radius: 8px; background: #FCA311; color: #14213D; display: inline-flex; align-items: center; justify-content: center; font-size: 0.9rem; } .ds-pill { display: inline-flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.08); padding: 4px 12px 4px 6px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.12); font-size: 0.85rem; } .ds-avatar { width: 26px; height: 26px; border-radius: 50%; background: #FCA311; color: #14213D; font-weight: 700; font-size: 0.72rem; display: inline-flex; align-items: center; justify-content: center; } .ds-role { font-family: 'DM Mono', monospace; font-size: 0.7rem; background: #FCA311; color: #14213D; padding: 2px 6px; border-radius: 4px; font-weight: 700; }"
+    },
+    {
+      "name": "Admission Telemetry Cell",
+      "kind": "card",
+      "refersTo": "card-surface",
+      "description": "Sel informasi kursi dan jadwal bergaya tiket fisik pada E-Ticket Pass.",
+      "html": "<div class=\"ds-telemetry\"><span class=\"ds-t-label\">NOMOR KURSI (2)</span><strong class=\"ds-t-seat\">C4, C5</strong></div>",
+      "css": ".ds-telemetry { display: inline-flex; flex-direction: column; gap: 4px; background: rgba(252, 163, 17, 0.14); border: 1px solid #FCA311; border-radius: 8px; padding: 10px 16px; font-family: 'DM Mono', monospace; } .ds-t-label { font-size: 0.72rem; color: #6B7280; } .ds-t-seat { font-size: 1.2rem; color: #B87300; font-weight: 700; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Modern Projection Booth",
+    "overview": "CineVerse menggabungkan ketenangan ruang bioskop gelap dengan presisi instrumen ruang proyektor modern. Seluruh antarmuka dirancang agar poster film dan status ketersediaan kursi langsung memimpin hierarki visual, sementara elemen navigasi dan panel administrasi tetap tenang dengan ruang kosong yang lega.\n\nSistem ini menggunakan pendekatan Flat-by-Default & Hairline-Framed serta komponen yang Tactile & High-Signal: setiap permukaan kartu dibingkai garis tipis 1px tanpa bayangan dekoratif berlebih, tombol dan kursi merespons sentuhan secara presisi, dan setiap data transaksi (nomor kursi, jam tayang, kode booking, dan harga) selalu ditampilkan dengan font monospasi tabular.",
+    "keyCharacteristics": [
+      "Poster-First Hierarchy: Poster film (2:3) dan status kursi menjadi jangkar visual utama di setiap halaman publik dan pemesanan.",
+      "Projector Amber Signal: Warna aksen Amber dipakai secara disiplin hanya untuk aksi utama (CTA), kursi yang sedang dipilih, dan sorotan telemetri tiket.",
+      "High-Signal Monospace Telemetry: Koordinat kursi (A1, C4), kode booking (CV-DEMO01), durasi, dan harga selalu menggunakan angka tabular monospasi.",
+      "Dual-Mode Native Parity: Mendukung pertukaran instan antara Mode Terang (Warm Paper) dan Mode Gelap (Theater Night) lewat variabel CSS."
+    ],
+    "rules": [
+      {
+        "name": "The Projector Beam Rule",
+        "body": "Warna Projector Amber (#FCA311) hanya boleh muncul pada elemen yang dapat diklik, dipilih, atau menunjukkan nilai sorotan utama; jangan pernah menggunakannya sebagai latar kartu penuh atau hiasan dekoratif.",
+        "section": "colors"
+      },
+      {
+        "name": "The Semantic Seat Rule",
+        "body": "Pada denah studio, tiga warna memiliki arti mutlak yang tidak boleh ditukar: abu-abu terang/gelap untuk kursi kosong, Projector Amber untuk kursi dipilih, dan Velvet Crimson untuk kursi terisi.",
+        "section": "colors"
+      },
+      {
+        "name": "The Tabular Telemetry Rule",
+        "body": "Seluruh harga Rupiah, penghitung waktu mundur 10 menit, koordinat kursi, dan angka laporan wajib menggunakan font-variant-numeric: tabular-nums dan/atau DM Mono agar kolom angka tidak bergeser saat nilainya berubah.",
+        "section": "typography"
+      },
+      {
+        "name": "The Single Elevation Declaration Rule",
+        "body": "Setiap kontainer hanya boleh mendeklarasikan batasnya satu kali (menggunakan border 1px saja tanpa box-shadow tambahan) untuk mencegah efek ghost card.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Compositor-Only Motion Rule",
+        "body": "Kedalaman interaktif pada kartu film (translateY(-6px) dan pembesaran poster scale(1.05) selama 200ms ease-out) serta tombol/kursi (150ms ease-out) hanya boleh menganimasikan transform dan opacity, serta wajib dimatikan saat @media (prefers-reduced-motion: reduce) aktif.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do gunakan DM Mono dengan font-variant-numeric: tabular-nums untuk seluruh nomor kursi, kode booking, jam tayang, dan nominal harga.",
+      "Do batasi penggunaan warna Projector Amber (#FCA311) hanya untuk CTA utama, kursi yang dipilih, dan indikator penting agar sinyal visual tetap tajam.",
+      "Do pertahankan rasio poster 2:3 (aspect-ratio: 2 / 3) dan single-line truncation pada judul/genre kartu film agar tinggi baris katalog selalu rata.",
+      "Do sertakan structural skeleton saat memuat pencarian asinkron dan berikan tombol aksi pemulihan pada empty state."
+    ],
+    "donts": [
+      "Don't menambahkan gradien warna-warni, teks bergradien, atau bayangan blok keras (neobrutalist hard shadows).",
+      "Don't menggabungkan border: 1px dengan box-shadow lebar pada kartu yang sama (The Single Elevation Declaration Rule).",
+      "Don't menganimasikan properti tata letak (width, height, top, left, margin, padding); gunakan hanya transform dan opacity.",
+      "Don't menghapus indikator fokus keyboard (:focus-visible) pada tombol, kursi, maupun input form."
+    ]
+  }
+}
