@@ -7,7 +7,7 @@ $user = currentUser();
 
 $bookingId = (int)($_GET['id'] ?? 0);
 $stmt = $pdo->prepare("
-    SELECT b.*, s.start_time, m.title AS movie_title, m.age_rating, m.duration_min,
+    SELECT b.*, s.start_time, m.title AS movie_title, m.poster, m.age_rating, m.duration_min, m.language,
            st.name AS studio_name, st.type AS studio_type, p.method AS payment_method
     FROM bookings b
     JOIN showtimes s ON s.id = b.showtime_id
@@ -58,50 +58,95 @@ require_once __DIR__ . '/../includes/layout/header.php';
     </div>
 </div>
 
-<div class="ticket-card">
-    <div>
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-            <span class="badge badge-paid">STATUS: <?= strtoupper(e($booking['status'])) ?></span>
-            <?php if ($booking['checked_in_at']): ?>
-                <span class="badge badge-danger">SUDAH CHECK-IN (<?= date('H:i', strtotime($booking['checked_in_at'])) ?>)</span>
-            <?php else: ?>
-                <span class="badge badge-info">BELUM CHECK-IN</span>
-            <?php endif; ?>
-        </div>
-
-        <h2 style="margin-bottom:4px;"><?= e($booking['movie_title']) ?></h2>
-        <p class="text-muted" style="margin-bottom:16px;">
-            <?= e($booking['studio_name']) ?> (<?= strtoupper(e($booking['studio_type'])) ?>) • <?= e($booking['age_rating']) ?>
-        </p>
-
-        <div class="form-row" style="gap:12px;margin-bottom:16px;">
-            <div>
-                <span class="text-muted">Tanggal &amp; Jam Tayang</span><br>
-                <strong class="mono"><?= date('d M Y • H:i', strtotime($booking['start_time'])) ?> WIB</strong>
+<div class="ticket-pass">
+    <!-- Bagian Utama Tiket -->
+    <div class="ticket-main">
+        <div class="ticket-banner">
+            <div class="ticket-brand">
+                <span class="brand-mark">CV</span>
+                <div>
+                    <strong style="color:#FFFFFF;font-size:0.95rem;display:block;line-height:1.1;">CINEVERSE ADMISSION PASS</strong>
+                    <span class="mono" style="color:rgba(255,255,255,0.7);font-size:0.75rem;">
+                        <?= e(strtoupper($booking['studio_name'])) ?> • <?= e(strtoupper($booking['studio_type'])) ?> CLASS
+                    </span>
+                </div>
             </div>
-            <div>
-                <span class="text-muted">Nomor Kursi</span><br>
-                <strong class="mono text-accent" style="font-size:1.15rem;"><?= e(implode(', ', $seatLabels)) ?></strong>
+            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+                <span class="badge badge-paid"><?= strtoupper(e($booking['status'])) ?></span>
+                <?php if ($booking['checked_in_at']): ?>
+                    <span class="badge badge-danger">SUDAH CHECK-IN • <?= date('H:i', strtotime($booking['checked_in_at'])) ?></span>
+                <?php else: ?>
+                    <span class="badge badge-warning">SIAP PINDAI PINTU</span>
+                <?php endif; ?>
             </div>
         </div>
 
-        <div class="form-row" style="gap:12px;padding-top:12px;border-top:1px solid var(--border);">
-            <div>
-                <span class="text-muted">Kode Booking</span><br>
-                <strong class="mono booking-code" style="font-size:1.2rem;"><?= e($booking['booking_code']) ?></strong>
+        <div class="ticket-body">
+            <div class="ticket-film">
+                <img src="<?= e(posterUrl($booking['poster'])) ?>" alt="<?= e($booking['movie_title']) ?>" class="ticket-poster">
+                <div>
+                    <div style="display:flex;gap:6px;align-items:center;margin-bottom:8px;flex-wrap:wrap;">
+                        <span class="badge badge-info"><?= e($booking['age_rating']) ?></span>
+                        <span class="mono text-muted" style="font-size:0.8rem;"><?= (int)$booking['duration_min'] ?> MENIT • <?= e(strtoupper($booking['language'])) ?></span>
+                    </div>
+                    <h2 class="ticket-movie-title"><?= e($booking['movie_title']) ?></h2>
+                    <p class="text-muted" style="font-size:0.88rem;margin-top:4px;">
+                        Tunjukkan QR Code di potongan tiket sebelah kanan kepada petugas pintu studio.
+                    </p>
+                </div>
             </div>
-            <div>
-                <span class="text-muted">Pembeli / Metode</span><br>
-                <strong><?= e($booking['customer_name'] ?: 'Walk-in Loket') ?> (<?= e($booking['payment_method'] ?: '-') ?>)</strong>
+
+            <div class="ticket-telemetry">
+                <div class="telemetry-cell">
+                    <span class="telemetry-label">TANGGAL TAYANG</span>
+                    <strong class="mono telemetry-value"><?= date('d M Y', strtotime($booking['start_time'])) ?></strong>
+                </div>
+                <div class="telemetry-cell">
+                    <span class="telemetry-label">JAM MULAI</span>
+                    <strong class="mono telemetry-value"><?= date('H:i', strtotime($booking['start_time'])) ?> WIB</strong>
+                </div>
+                <div class="telemetry-cell">
+                    <span class="telemetry-label">STUDIO</span>
+                    <strong class="mono telemetry-value"><?= e($booking['studio_name']) ?></strong>
+                </div>
+                <div class="telemetry-cell telemetry-highlight">
+                    <span class="telemetry-label">NOMOR KURSI (<?= count($seatLabels) ?>)</span>
+                    <strong class="mono telemetry-seat"><?= e(implode(', ', $seatLabels)) ?></strong>
+                </div>
+            </div>
+
+            <div class="ticket-meta-bar">
+                <div>
+                    <span class="text-muted">Nama Penonton:</span>
+                    <strong><?= e($booking['customer_name'] ?: 'Walk-in Loket') ?></strong>
+                </div>
+                <div>
+                    <span class="text-muted">Metode Bayar:</span>
+                    <strong><?= e($booking['payment_method'] ?: '-') ?></strong>
+                </div>
+                <div>
+                    <span class="text-muted">Total Lunas:</span>
+                    <strong class="mono"><?= rupiah($booking['total_price']) ?></strong>
+                </div>
             </div>
         </div>
     </div>
 
-    <div class="qr-box">
-        <div id="qrcode" data-code="<?= e($booking['booking_code']) ?>"></div>
-        <span class="mono" style="color:#14213D;font-size:0.8rem;margin-top:8px;font-weight:700;">
+    <!-- Garis Sobekan Perforasi -->
+    <div class="ticket-perforation" aria-hidden="true"></div>
+
+    <!-- Potongan Sobekan Pintu (Gate Stub) -->
+    <div class="ticket-stub">
+        <span class="mono ticket-stub-header">GATE SCAN STUB</span>
+        <div class="qr-box">
+            <div id="qrcode" data-code="<?= e($booking['booking_code']) ?>"></div>
+        </div>
+        <div class="ticket-code-pill mono">
             <?= e($booking['booking_code']) ?>
-        </span>
+        </div>
+        <div class="mono text-muted" style="font-size:0.78rem;text-align:center;">
+            KURSI: <strong style="color:var(--text);"><?= e(implode(', ', $seatLabels)) ?></strong>
+        </div>
     </div>
 </div>
 
