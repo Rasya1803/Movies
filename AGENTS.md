@@ -5,21 +5,25 @@
 ## 1. Ringkasan Produk & Tech Stack
 - **Nama Produk:** CineVerse (Website Pemesanan Tiket Bioskop Lokal)
 - **Backend:** PHP 8.x native (tanpa framework), berjalan di XAMPP (`c:\xampp\htdocs\BIOSKOP`).
-- **Database:** MySQL / MariaDB (`cineverse`) menggunakan **PDO prepared statements** untuk seluruh query dan `password_hash()` / `password_verify()` untuk autentikasi.
-- **Frontend:** HTML5, CSS3 vanilla (dengan CSS Variables di `assets/css/style.css`), JavaScript vanilla (`fetch` + JSON, tanpa build tool).
-- **CDN Libraries:** `Chart.js` (grafik dashboard admin), `qrcode.js` (QR code e-ticket), `html5-qrcode` (scan tiket oleh operator).
+- **Database:** MySQL / MariaDB (`cineverse`) menggunakan **PDO prepared statements** untuk seluruh query.
+- **Autentikasi (Plaintext Password):** Password pengguna disimpan dan dicocokkan langsung dalam bentuk **teks biasa (tanpa `password_hash()` / tanpa di-hash)** agar mudah dilihat dan diuji di database selama pembelajaran.
+- **Frontend (Zero JavaScript):** Murni **HTML5 + CSS3 vanilla** (dengan CSS Variables di `assets/css/style.css`). **Dilarang menggunakan JavaScript (`.js`, `<script>`, `fetch`, atau library JS eksternal).**
+  - Pilih kursi menggunakan `<input type="checkbox">` + `<label>` dengan state `:checked` CSS.
+  - Pencarian & filter menggunakan form `GET` PHP.
+  - Grafik pada dashboard admin menggunakan CSS bar/progress chart murni.
+  - Mode gelap (*dark mode*) dikelola lewat session/cookie PHP (toggle link/form) yang mengganti atribut tema pada `<html>` dan CSS Variables.
 
 ## 2. Peran Pengguna (Role-Based Access Control)
 1. **Guest:** Melihat beranda, katalog film ("Sedang Tayang" & "Segera Hadir"), detail film, dan jadwal tayang.
-2. **User:** Registrasi/login, pilih kursi interaktif (maksimal 6 kursi/pesanan), hold kursi 10 menit, simulasi pembayaran, lihat riwayat & cetak E-Ticket QR, pakai kode promo, watchlist, serta beri rating & ulasan.
-3. **Operator:** Validasi tiket via input kode booking / scan QR kamera (tolak jika sudah pernah di-scan), kelola jadwal tayang (`showtimes`), penjualan tiket langsung di loket (walk-in tanpa akun user), dan pantau okupansi kursi per sesi.
-4. **Admin:** Dashboard ringkasan & grafik penjualan (`Chart.js`), CRUD film + upload poster lokal, CRUD studio + generate denah kursi otomatis (Regular/Premier), kelola harga tiket, kelola promo, kelola akun user/operator, dan ekspor laporan penjualan ke CSV.
+2. **User:** Registrasi/login (plaintext password), pilih kursi (checkbox HTML/CSS, maksimal 6 kursi/pesanan divalidasi di PHP), hold kursi 10 menit, simulasi pembayaran, lihat riwayat & cetak E-Ticket (`@media print`), pakai kode promo, watchlist, serta beri rating & ulasan.
+3. **Operator:** Validasi tiket via input kode booking di form PHP (tolak jika sudah pernah divalidasi), kelola jadwal tayang (`showtimes`), penjualan tiket langsung di loket (walk-in tanpa akun user), dan pantau okupansi kursi per sesi.
+4. **Admin:** Dashboard ringkasan & grafik penjualan (CSS bar chart), CRUD film + upload poster lokal, CRUD studio + generate denah kursi otomatis (Regular/Premier), kelola harga tiket, kelola promo, kelola akun user/operator, dan ekspor laporan penjualan ke CSV.
 
 ## 3. Aturan Penting Database & Transaksi
 - Database memiliki **13 tabel inti**: `users`, `genres`, `movies`, `movie_genres`, `studios`, `seats`, `showtimes`, `bookings`, `booking_seats`, `payments`, `promos`, `reviews`, `watchlists`.
 - **Anti Double-Booking:** Tabel `booking_seats` wajib memiliki constraint `UNIQUE (showtime_id, seat_id)` agar dua pengguna tidak bisa memesan kursi yang sama pada jadwal yang sama.
-- **Hold Timer 10 Menit:** Pesanan berstatus `pending` yang melewati `expires_at` (10 menit) otomatis menjadi `expired` dan kursinya kembali tersedia.
-- **Single Check-In:** Tiket hanya bisa divalidasi satu kali (`checked_in_at` & `checked_in_by`); percobaan scan kedua harus ditolak.
+- **Hold Timer 10 Menit:** Pesanan berstatus `pending` yang melewati `expires_at` (10 menit) otomatis diubah menjadi `expired` oleh PHP saat halaman diakses dan kursinya kembali tersedia.
+- **Single Check-In:** Tiket hanya bisa divalidasi satu kali (`checked_in_at` & `checked_in_by`); percobaan validasi kedua harus ditolak.
 
 ## 4. Sistem Desain UI/UX (Acuan untuk `impeccable` & `baseline-ui`)
 ### Palet Warna (Navy & Amber)
@@ -40,28 +44,26 @@
 - **Body & Form:** `Inter` — Body `16px/400`, Label `14px/500`
 - **Kode Booking & Nomor Kursi:** `DM Mono` — `14px/500`
 
-### Tata Letak & Interaksi
+### Tata Letak & Interaksi (Murni CSS)
 - Lebar kontainer maksimal `1200px`, `border-radius: 12px`, sistem spacing kelipatan `8px`, navbar tetap di atas (*sticky*), responsif mulai dari lebar `360px`.
-- Mode gelap (*dark mode*) menggunakan pertukaran nilai CSS Variables dan disimpan di `localStorage`.
-- Animasi halus hanya menggunakan `transform` dan `opacity` serta wajib mematuhi `@media (prefers-reduced-motion: reduce)`.
+- Mode gelap (*dark mode*) menggunakan pertukaran nilai CSS Variables lewat session/cookie PHP.
+- Animasi halus murni CSS (`@keyframes` dan `transition` pada `transform` serta `opacity`) dan wajib mematuhi `@media (prefers-reduced-motion: reduce)`.
 
 ## 5. Struktur Folder Target
 ```text
 /
-├── database.sql          # Skema 13 tabel inti + data seed
+├── database.sql          # Skema 13 tabel inti + data seed (password plaintext)
 ├── includes/
 │   ├── db.php            # Koneksi PDO
 │   ├── auth.php          # Session & middleware cek peran
-│   ├── functions.php     # Helper harga, kode booking, upload poster
+│   ├── functions.php     # Helper harga, kode booking, upload poster, auto-expire
 │   └── layout/           # header.php, footer.php, navbar.php
 ├── public/               # Beranda, katalog, detail film, login, registrasi
 ├── user/                 # Pilih kursi, checkout, e-ticket, riwayat, watchlist
-├── operator/             # Scan tiket, jadwal tayang, penjualan loket
+├── operator/             # Validasi tiket, jadwal tayang, penjualan loket
 ├── admin/                # Dashboard, film, studio, akun, promo, laporan
-├── api/                  # Endpoint JSON untuk fetch (pencarian, kursi, validasi)
 ├── assets/
-│   ├── css/style.css     # CSS variables, komponen, animasi
-│   ├── js/               # app.js, seat-map.js, scanner.js, charts.js
+│   ├── css/style.css     # CSS variables, komponen, animasi CSS murni
 │   └── img/
 └── uploads/              # Poster film yang di-upload admin
 ```
